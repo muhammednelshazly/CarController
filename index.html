@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ESP32 ROBOT CONTROL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div>SYSTEM: ONLINE</div>
+        <div class="dot"></div>
+    </header>
+
+    <div class="speed-panel">
+        <div id="spd-low" class="spd-btn" onclick="setSpeed('low')">ECO</div>
+        <div id="spd-med" class="spd-btn active" onclick="setSpeed('med')">NORMAL</div>
+        <div id="spd-high" class="spd-btn" onclick="setSpeed('high')">TURBO</div>
+    </div>
+
+    <div class="control-pad">
+        <button class="btn up" 
+                onmousedown="startMove('forward')" onmouseup="stopMove()" 
+                ontouchstart="startMove('forward')" ontouchend="stopMove()">▲</button>
+        
+        <button class="btn left" 
+                onmousedown="startMove('left')" onmouseup="stopMove()" 
+                ontouchstart="startMove('left')" ontouchend="stopMove()">◀</button>
+        
+        <button class="btn stop" onclick="stopMove()">STOP</button>
+        
+        <button class="btn right" 
+                onmousedown="startMove('right')" onmouseup="stopMove()" 
+                ontouchstart="startMove('right')" ontouchend="stopMove()">▶</button>
+        
+        <button class="btn down" 
+                onmousedown="startMove('backward')" onmouseup="stopMove()" 
+                ontouchstart="startMove('backward')" ontouchend="stopMove()">▼</button>
+    </div>
+
+    <div class="console" id="console">
+        <div class="log-entry">System Ready... Waiting for input.</div>
+    </div>
+
+    <script>
+        // دالة الكتابة في الكونسول (الشاشة السوداء تحت)
+        function log(msg) {
+            const c = document.getElementById('console');
+            c.innerHTML += '<div class="log-entry">' + msg + '</div>';
+            c.scrollTop = c.scrollHeight;
+        }
+
+        // محاكاة إرسال الأمر (Simulation Mode)
+        function sendCommand(cmd) {
+            // في الوضع الحقيقي، هذا السطر يرسل للـ ESP32
+            // fetch('/' + cmd);
+            
+            // في وضع التجربة على الكمبيوتر، سنطبع فقط
+            log("Sending Command: " + cmd.toUpperCase());
+        }
+
+        function startMove(dir) {
+            sendCommand(dir);
+        }
+
+        function stopMove() {
+            sendCommand('stop');
+            log("MOTORS STOPPED");
+        }
+
+        function setSpeed(lvl) {
+            // تحديث الشكل (الأزرار)
+            document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('spd-' + lvl).classList.add('active');
+            
+            // إرسال الأمر
+            // fetch('/speed?val=' + lvl); 
+            log("SPEED SET TO: " + lvl.toUpperCase());
+        }
+
+        // منع القائمة المنبثقة عند الضغط المطول
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+</body>
+</html>
